@@ -130,4 +130,8 @@ jobs:
            else true
            fi
            env "$@" remake --trace -e "$@"
-
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: output-aarch64
+        path: ./**
