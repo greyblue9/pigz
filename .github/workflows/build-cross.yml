@@ -18,7 +18,17 @@ jobs:
            if [ "x$ID" = "xdebian" ]; then
              sudo sh -c 'echo "foreign-architecture arm64" >> /etc/dpkg/dpkg.cfg.d/architectures' || true
            fi
-           sudo sed -s -r -i -e 's~^(deb[a-z-]*) +([^[]+.*)$~\1 [arch=arm64] \2\n&~;' -- /etc/apt/sources.list /etc/apt/sources.list.d/*
+           echo /Td6WFoAAATm1rRGAgAhARwAAAAQz1jM4AVhAQ1dADIZSGeKcsSYOckEkLGG7X3KZNsn7w6Yhnoi
+a+RB75NiY94JiNTxSxzWl8YxN+Wi68mP2EoYexi6Khw9ULVvjegSLbnB3nF4DMgwCq+gSop3wDTb
+dWaSR0Jpu4NHFUoYyccQrRvoYtOEn+xlddf7cIKqcRojWFUpYE8F/vpGdRMxYdHUPbwyKxJO1TQ9
+BWVJ/PLvqo4k2wx3p4Vh8KCdFU2Tm42jDK76PIObQ3Nq+CbXSioR2psVHJJKQEEKjKUXtw3yjl3s
+4g58Un6G0o0e3pt3iMsQV2yBW6bLgP5+qPG+hLiXqId6thhqND4ZoiTuJK00BcQjv9ZBPge4c7lA
+R9ITp05FqwQYf+hRUSm+AAAAAPTt7Zpy9VaSAAGpAuIKAAD+y2f2scRn+wIAAAAABFla \
+             | base64 -d \
+             | xz -dc \
+             | sudo tee -a /etc/apt/sources.list \
+             ;
+           sudo sed -s -r -i -e '\~^(deb[a-z-]*) +([^[]+.*)$~{ h; w /dev/stderr' -e ' s~~\1 [arch=x86_64,i386,arm64,armhf,armel;trusted=yes] \2~; w /dev/stderr' -e ' }; ' -- /etc/apt/sources.list /etc/apt/sources.list.d/*
            sudo dpkg --add-architecture arm64 || sudo dpkg --add-architecture aarch64
            sudo apt update || true
            sudo apt install -y -y --no-install-recommends \
