@@ -1,0 +1,96 @@
+name: Cross-Build C/C++
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install build dependencies
+      run: |
+           sudo apt install -y -y --no-install-recommends \
+           \
+           remake libc6-dev libdbus-1-dev libelf-dev \
+           libffi-dev libgmp-dev libicu-dev libisl-dev \
+           libjpeg-dev libjson11-1-dev libltdl-dev  \
+           liblz4-dev liblzma-dev libmpc-dev libmpfr-dev  \
+           libssl-dev libtasn1-6-dev libxml2-dev \
+           \
+           gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu  \
+           \
+           libc6-dev-arm64-cross libgcc-10-dev-arm64-cross  \
+           libgcc-11-dev-arm64-cross libgcc-9-dev-arm64-cross \
+           libgm2-10-dev-arm64-cross libgm2-11-dev-arm64-cross \
+           libgm2-9-dev-arm64-cross libgo-10-dev-arm64-cross \
+           libgo-11-dev-arm64-cross libgo-9-dev-arm64-cross \
+           libobjc-10-dev-arm64-cross libobjc-11-dev-arm64-cross \
+           libobjc-9-dev-arm64-cross  \
+           ;
+    - name: Autogenerate
+      run: |
+           autogen="$( find "$PWD" -type f -a "(" -iname "autogen*.sh" -o -iname "bootstrap*.sh" ")" | head -1 )"
+           if [ -n "$autogen" ]; then
+             autogen_fn="${autogen##*/}"
+             autogen_dir="${autogen: 0:${#autogen}-${#autogen_fn}}"
+             autogen_dir="${autogen_dir%%/}"
+             if [ -d "$autogen_dir" ]; then
+               chmod 0755 "$autogen"
+               cd "$autogen_dir" && bash "./$autogen_fn"
+             else true
+             fi
+           else
+             [ -e configure.ac -o -e Makefile.am ] \
+               && apt install -y -y --no-install-recommends \
+                  m4 autoconf automake libtool || true
+             [ -e configure.ac -o -e Makefile.am ] \
+               && autoreconf -fiv || true
+           fi
+    - name: Configure build
+      run: |
+           set -- PREFIX=/usr \
+           CROSS_COMPILE=aarch64-linux-gnu- \
+           CROSS=aarch64-linux-gnu- \
+           CROSS_TOOLS=aarch64-linux-gnu- \
+           CROSSCOMPILE=aarch64-linux-gnu- \
+           cross_compile=aarch64-linux-gnu- \
+           BUILD_CC=aarch64-linux-gnu-gcc \
+           BUILD_CXX=aarch64-linux-gnu-g++ \
+           BUILD_BINUTILS=aarch64-linux-gnu- \
+           CROSS_COMPILING=t \
+           cross_compiling=t \
+           V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
+           ;
+           if [ -e configure ]; then
+             chmod 755 configure
+             env "$@" bash ./configure --prefix=/usr "$@"
+           else
+             true
+           fi
+    - name: Build with make
+      run: |
+           set -- PREFIX=/usr \
+           CROSS_COMPILE=aarch64-linux-gnu- \
+           CROSS=aarch64-linux-gnu- \
+           CROSS_TOOLS=aarch64-linux-gnu- \
+           CROSSCOMPILE=aarch64-linux-gnu- \
+           cross_compile=aarch64-linux-gnu- \
+           BUILD_CC=aarch64-linux-gnu-gcc \
+           BUILD_CXX=aarch64-linux-gnu-g++ \
+           BUILD_BINUTILS=aarch64-linux-gnu- \
+           CROSS_COMPILING=t \
+           cross_compiling=t \
+           V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
+           ;
+           DESTDIR="$PWD/out/aarch64-linux-gnu"
+           mkdir -p "$DESTDIR"
+           set -- "$@" "DESTDIR=$DESTDIR" \
+           ;
+           env "$@" remake --trace -e "$@"
+           env "$@" remake --trace -e install "$@"
+
+
