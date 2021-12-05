@@ -23,7 +23,7 @@ jobs:
            \
            gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu  \
            \
-           libc6-dev-arm64-cross libgcc-dev-arm64-cross \
+           libc6-dev-arm64-cross \
            ;
     - name: Autogenerate
       run: |
