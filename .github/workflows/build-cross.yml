@@ -28,46 +28,19 @@ jobs:
            ;
     - name: More deps
       run: |
-           sudo apt install -y -y --no-install-recommends aptitude
            sudo dpkg --add-architecture arm64 || sudo dpkg --force-architecture arm64 || true
-           sudo aptitude update --allow-untrusted || true
-           sudo apt install -y -y --install-recommends \
+           sudo apt install -y -y --no-install-recommends \
            \
-           remake libc6-dev libdbus-1-dev libelf-dev \
-           libffi-dev libgmp-dev libicu-dev libisl-dev \
-           libjpeg-dev libjson11-1-dev libltdl-dev  \
-           liblz4-dev liblzma-dev libmpc-dev libmpfr-dev  \
-           libssl-dev libtasn1-6-dev libxml2-dev \
+           remake libc6-dev \
            \
-           gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
+           gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
            \
            libc6-dev-arm64-cross \
+           linux-libc-dev-bin \
            zlib1g-dev \
            ;
-           sudo apt install -y -y zlib1g-dev || true
-           sudo apt install -y -y zlib1g-dev:arm64 || true
-           sudo apt install -y -y zlib1g-dev-arm64 || true
-           sudo apt install -y -y zlib1g-dev-arm64-cross || true
-           sudo apt install -y -y zlib1g-dev-cross || true
-           sudo apt install -y -y zlib1g:arm64 || true
-           sudo apt install -y -y libz1g-dev || true
-           sudo apt install -y -y libz1g-dev:arm64 || true
-           sudo apt install -y -y libz1g-dev-arm64 || true
-           sudo apt install -y -y libz1g-dev-arm64-cross || true
-           sudo apt install -y -y libz1g-dev-cross || true
-           sudo apt install -y -y libz1g:arm64 || true
-           sudo apt install -y -y libz-dev || true
-           sudo apt install -y -y libz-dev:arm64 || true
-           sudo apt install -y -y libz-dev-arm64 || true
-           sudo apt install -y -y libz-dev-arm64-cross || true
-           sudo apt install -y -y libz-dev-cross || true
-           sudo apt install -y -y libz:arm64 || true
-           sudo apt install -y -y z1g-dev || true
-           sudo apt install -y -y z1g-dev:arm64 || true
-           sudo apt install -y -y libz1-dev-arm64 || true
-           sudo apt install -y -y libz1-dev-arm64-cross || true
-           sudo apt install -y -y libz1-dev-cross || true
-           sudo apt install -y -y libz1:arm64 || true
+           wget "http://ftp.de.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-1_arm64.deb"
+           sudo dpkg -i --force-all zlib1g-dev_1.2.11.dfsg-1_arm64.deb
     - name: Autogenerate
       run: |
            autogen="$( find "$PWD" -type f -a "(" -iname "autogen*.sh" -o -iname "bootstrap*.sh" ")" | head -1 )"
