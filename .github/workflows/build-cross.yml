@@ -35,10 +35,10 @@ jobs:
            \
            gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
            \
-           libc6-dev-arm64-cross \
-           linux-libc-dev-bin \
-           zlib1g-dev \
-           ;
+           libc6-dev-arm64-cross linux-libc-dev-arm64-cross \
+           linux-libc-dev \
+           zlib1g-dev ;
+           sudo apt install -y -y  --install-recommends zlib1g-dev:arm64/unstable || true
            wget "http://ftp.de.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-1_arm64.deb"
            sudo dpkg -i --force-all zlib1g-dev_1.2.11.dfsg-1_arm64.deb
     - name: Autogenerate
