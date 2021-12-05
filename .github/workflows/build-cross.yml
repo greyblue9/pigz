@@ -19,7 +19,7 @@ jobs:
              sudo sh -c 'echo "foreign-architecture arm64" >> /etc/dpkg/dpkg.cfg.d/architectures' || true
            fi
            sudo sed -s -r -i -e 's~^(deb[a-z-]*) +([^[]+.*)$~\1 [arch=arm64] \2\n&~;' -- /etc/apt/sources.list /etc/apt/sources.list.d/*
-           sudo dpkg add-architecture=arm64 || sudo dpkg add-architecture=aarch64
+           sudo dpkg --add-architecture arm64 || sudo dpkg --add-architecture aarch64
            sudo apt update || true
            sudo apt install -y -y --no-install-recommends \
            \
