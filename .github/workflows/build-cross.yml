@@ -55,6 +55,13 @@ jobs:
            BUILD_CC=aarch64-linux-gnu-gcc \
            BUILD_CXX=aarch64-linux-gnu-g++ \
            BUILD_BINUTILS=aarch64-linux-gnu- \
+           CC=aarch64-linux-gnu-gcc \
+           CXX=aarch64-linux-gnu-g++ \
+           AR=aarch64-linux-gnu-gcc-ar \
+           GCC_AR=aarch64-linux-gnu-gcc-ar \
+           LD=aarch64-linux-gnu-ld \
+           NM=aarch64-linux-gnu-nm \
+           BINUTILS=aarch64-linux-gnu- \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
@@ -76,6 +83,13 @@ jobs:
            BUILD_CC=aarch64-linux-gnu-gcc \
            BUILD_CXX=aarch64-linux-gnu-g++ \
            BUILD_BINUTILS=aarch64-linux-gnu- \
+           CC=aarch64-linux-gnu-gcc \
+           CXX=aarch64-linux-gnu-g++ \
+           AR=aarch64-linux-gnu-gcc-ar \
+           GCC_AR=aarch64-linux-gnu-gcc-ar \
+           LD=aarch64-linux-gnu-ld \
+           NM=aarch64-linux-gnu-nm \
+           BINUTILS=aarch64-linux-gnu- \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
