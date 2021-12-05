@@ -29,8 +29,8 @@ jobs:
     - name: More deps
       run: |
            sudo apt install -y -y --no-install-recommends aptitude
-           sudo dpkg --add-architecture arm64 || sudo dpkg --force-architecture arm64
-           sudo aptitude update --allow-untrusted 
+           sudo dpkg --add-architecture arm64 || sudo dpkg --force-architecture arm64 || true
+           sudo aptitude update --allow-untrusted || true
            sudo apttitude install -y -y --install-recommends --clean-on-startup --allow-new-upgrades --allow-new-installs \
            \
            remake libc6-dev libdbus-1-dev libelf-dev \
