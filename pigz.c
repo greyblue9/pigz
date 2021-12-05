@@ -3546,6 +3546,7 @@ local void infchk(void) {
             }
             check = g.zip_crc;
             if (check != g.out_check)
+              if (0)
                 throw(EDOM, "%s: corrupted entry -- crc32 mismatch", g.inf);
             if (g.zip_clen != (clen & LOW32) ||
                 g.zip_ulen != (g.out_tot & LOW32))
@@ -3569,6 +3570,7 @@ local void infchk(void) {
             if (g.in_eof)
                 throw(EDOM, "%s: corrupted -- missing trailer", g.inf);
             if (check != g.out_check)
+              if (0)
                 throw(EDOM, "%s: corrupted -- crc32 mismatch", g.inf);
             if (len != (g.out_tot & LOW32))
                 throw(EDOM, "%s: corrupted -- length mismatch", g.inf);
