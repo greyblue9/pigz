@@ -121,6 +121,13 @@ jobs:
            set -- "$@" "DESTDIR=$DESTDIR" \
            ;
            env "$@" remake --trace -e "$@"
-           env "$@" remake --trace -e install "$@"
-
+           if env "$@" remake --trace -e --targets "$@" | grep -Fwe install ; then
+             env "$@" remake --trace -e install "$@"
+           else true
+           fi
+           if env "$@" remake --trace -e --targets "$@" | grep -Fwe dist ; then
+             env "$@" remake --trace -e dist "$@"
+           else true
+           fi
+           env "$@" remake --trace -e "$@"
 
