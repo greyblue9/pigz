@@ -21,9 +21,13 @@ jobs:
            liblz4-dev liblzma-dev libmpc-dev libmpfr-dev  \
            libssl-dev libtasn1-6-dev libxml2-dev \
            \
-           gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu  \
+           gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
            \
            libc6-dev-arm64-cross \
+           zlib1g-dev-arm64-cross \
+           libgmp-dev-arm64-cross \
+           liblzma-dev-arm64-cross \
+           libmpfr-dev-arm64-cross \
            ;
     - name: Autogenerate
       run: |
@@ -90,6 +94,8 @@ jobs:
            LD=aarch64-linux-gnu-ld \
            NM=aarch64-linux-gnu-nm \
            BINUTILS=aarch64-linux-gnu- \
+           "CFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches" \
+           "CXXFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches" \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
