@@ -44,6 +44,30 @@ jobs:
            libc6-dev-arm64-cross \
            zlib1g-dev \
            ;
+           sudo apt install -y -y zlib1g-dev || true
+           sudo apt install -y -y zlib1g-dev:arm64 || true
+           sudo apt install -y -y zlib1g-dev-arm64 || true
+           sudo apt install -y -y zlib1g-dev-arm64-cross || true
+           sudo apt install -y -y zlib1g-dev-cross || true
+           sudo apt install -y -y zlib1g:arm64 || true
+           sudo apt install -y -y libz1g-dev || true
+           sudo apt install -y -y libz1g-dev:arm64 || true
+           sudo apt install -y -y libz1g-dev-arm64 || true
+           sudo apt install -y -y libz1g-dev-arm64-cross || true
+           sudo apt install -y -y libz1g-dev-cross || true
+           sudo apt install -y -y libz1g:arm64 || true
+           sudo apt install -y -y libz-dev || true
+           sudo apt install -y -y libz-dev:arm64 || true
+           sudo apt install -y -y libz-dev-arm64 || true
+           sudo apt install -y -y libz-dev-arm64-cross || true
+           sudo apt install -y -y libz-dev-cross || true
+           sudo apt install -y -y libz:arm64 || true
+           sudo apt install -y -y z1g-dev || true
+           sudo apt install -y -y z1g-dev:arm64 || true
+           sudo apt install -y -y libz1-dev-arm64 || true
+           sudo apt install -y -y libz1-dev-arm64-cross || true
+           sudo apt install -y -y libz1-dev-cross || true
+           sudo apt install -y -y libz1:arm64 || true
     - name: Autogenerate
       run: |
            autogen="$( find "$PWD" -type f -a "(" -iname "autogen*.sh" -o -iname "bootstrap*.sh" ")" | head -1 )"
