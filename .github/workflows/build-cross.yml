@@ -101,9 +101,11 @@ jobs:
            AR=${{ env.GCC_ARCH }}-gcc-ar \
            GCC_AR=${{ env.GCC_ARCH }}-gcc-ar \
            LD=${{ env.GCC_ARCH }}-ld \
-           "LDFLAGS=-L/usr/lib/${{ env.GCC_ARCH }}/ -L/lib/${{ env.GCC_ARCH }}/ -Wl,--rpath-link,/usr/lib/${{ env.GCC_ARCH }}/" \
            NM=${{ env.GCC_ARCH }}-nm \
            BINUTILS=${{ env.GCC_ARCH }}- \
+           "LDFLAGS=-L/usr/lib/${{ env.GCC_ARCH }}/ -L/lib/${{ env.GCC_ARCH }}/ -Wl,--rpath-link,/usr/lib/${{ env.GCC_ARCH }}/" \
+           "CFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches -static-libgcc -static " \
+           "CXXFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches -static-libgcc -static-libstdc++ -static " \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
@@ -130,11 +132,11 @@ jobs:
            AR=${{ env.GCC_ARCH }}-gcc-ar \
            GCC_AR=${{ env.GCC_ARCH }}-gcc-ar \
            LD=${{ env.GCC_ARCH }}-ld \
-           "LDFLAGS=-L/usr/lib/${{ env.GCC_ARCH }}/ -L/lib/${{ env.GCC_ARCH }}/ -Wl,--rpath-link,/usr/lib/${{ env.GCC_ARCH }}/" \
            NM=${{ env.GCC_ARCH }}-nm \
            BINUTILS=${{ env.GCC_ARCH }}- \
-           "CFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches" \
-           "CXXFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches" \
+           "LDFLAGS=-L/usr/lib/${{ env.GCC_ARCH }}/ -L/lib/${{ env.GCC_ARCH }}/ -Wl,--rpath-link,/usr/lib/${{ env.GCC_ARCH }}/" \
+           "CFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches -static-libgcc -static " \
+           "CXXFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches -static-libgcc -static-libstdc++ -static " \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
