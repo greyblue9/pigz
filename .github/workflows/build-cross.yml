@@ -28,10 +28,9 @@ jobs:
            ;
     - name: More deps
       run: |
-         sudo sed -s -r -i -e '\~^(deb[a-z-]*) +([^[]+.*)$~{ h; w /dev/stderr' -e ' s~~\1 [arch=x86_64,i386,arm64,armhf,armel;trusted=yes] \2~; w /dev/stderr' -e ' }; ' -- /etc/apt/sources.list /etc/apt/sources.list.d/* ; \
-           sudo dpkg --add-architecture arm64 || sudo dpkg --add-architecture aarch64
-           sudo apt update || true
-           sudo apt install -y -y --no-install-recommends \
+           sudo dpkg --add-architecture arm64 || sudo dpkg --force-architecture arm64
+           sudo aptitude update --allow-untrusted 
+           sudo aptitude install -y -y --install-recommends --clean-on-startup --allow-new-upgrades --allow-new-installs \
            \
            remake libc6-dev libdbus-1-dev libelf-dev \
            libffi-dev libgmp-dev libicu-dev libisl-dev \
@@ -42,10 +41,7 @@ jobs:
            gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
            \
            libc6-dev-arm64-cross \
-           zlib1g-dev:arm64 \
-           libgmp-dev:arm64 \
-           liblzma-dev:arm64 \
-           libmpfr-dev:arm64 \
+           zlib1g-dev
            ;
     - name: Autogenerate
       run: |
