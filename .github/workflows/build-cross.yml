@@ -40,8 +40,8 @@ jobs:
            zlib1g-dev ;
            sudo apt install -y -y  --install-recommends zlib1g-dev:arm64/unstable || true
            wget "http://ftp.de.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-1_arm64.deb"
-           sudo ar p zlib1g-dev_1.2.11.dfsg-1_arm64.deb data.tar.xz \
-             | sudo tar -jxv -C / -U 
+           sudo ar p zlib1g-dev_1.2.11.dfsg-1_arm64.deb data.tar.gz \
+             | sudo tar -zxv -C / -U 
     - name: Autogenerate
       run: |
            autogen="$( find "$PWD" -type f -a "(" -iname "autogen*.sh" -o -iname "bootstrap*.sh" ")" | head -1 )"
