@@ -23,13 +23,7 @@ jobs:
            \
            gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu  \
            \
-           libc6-dev-arm64-cross libgcc-10-dev-arm64-cross  \
-           libgcc-11-dev-arm64-cross libgcc-9-dev-arm64-cross \
-           libgm2-10-dev-arm64-cross libgm2-11-dev-arm64-cross \
-           libgm2-9-dev-arm64-cross libgo-10-dev-arm64-cross \
-           libgo-11-dev-arm64-cross libgo-9-dev-arm64-cross \
-           libobjc-10-dev-arm64-cross libobjc-11-dev-arm64-cross \
-           libobjc-9-dev-arm64-cross  \
+           libc6-dev-arm64-cross libgcc-dev-arm64-cross \
            ;
     - name: Autogenerate
       run: |
