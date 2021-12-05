@@ -16,5 +16,5 @@ jobs:
     - name: Configure build
       run: if [ -e configure ]; then chmod 755 configure && bash ./configure --prefix=/usr; else true; fi
     - name: Build with make
-      run: remake --trace --verbose -e VERBOSE=1 VERBOSE_MAKEFILE=1 silent= SILENT= V=1 PREFIX=/usr 
+      run: remake --trace -e VERBOSE=1 VERBOSE_MAKEFILE=1 silent= SILENT= V=1 PREFIX=/usr 
 
