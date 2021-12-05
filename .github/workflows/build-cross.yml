@@ -8,39 +8,62 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        arch: ["arm64:aarch64-linux-gnu", "armhf:arm-linux-gnueabihf", "armel:arm-linux-gnueabi", "mips:mips-linux-gnu", "mips64el:mips64el-linux-gnuabi64", "i686:i686-linux-gnu/i386-amd64", "amd64:x86_64-linux-gnu"]
+      fail-fast: false
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Install build dependencies
+    - name: Set platform variables
       run: |
-         {
-           echo "/Td6WFoAAATm1rRGAgAhARwAAAAQz1jM4AVhAQ1dADIZSGeKcsSYOckEkLGG7X3KZNsn7w6Yhnoi"
-           echo "a+RB75NiY94JiNTxSxzWl8YxN+Wi68mP2EoYexi6Khw9ULVvjegSLbnB3nF4DMgwCq+gSop3wDTb"
-           echo "dWaSR0Jpu4NHFUoYyccQrRvoYtOEn+xlddf7cIKqcRojWFUpYE8F/vpGdRMxYdHUPbwyKxJO1TQ9"
-           echo "BWVJ/PLvqo4k2wx3p4Vh8KCdFU2Tm42jDK76PIObQ3Nq+CbXSioR2psVHJJKQEEKjKUXtw3yjl3s"
-           echo "4g58Un6G0o0e3pt3iMsQV2yBW6bLgP5+qPG+hLiXqId6thhqND4ZoiTuJK00BcQjv9ZBPge4c7lA"
-           echo "R9ITp05FqwQYf+hRUSm+AAAAAPTt7Zpy9VaSAAGpAuIKAAD+y2f2scRn+wIAAAAABFla"
-         } \
-           | base64 -d \
-           | xz -dc \
-           | sudo tee -a /etc/apt/sources.list \
-           ;
+           arches="${{ matrix.arch }}"
+           arch="${arches%%/*}"
+           arch="${arch%%:*}"
+           gcc_arch="${arches%%/*}"
+           gcc_arch="${gcc_arch: ${#arch}+1}"
+           libc_arch="${arches##*/}"
+           deb_arch="${gcc_arch//_/-}"
+           [ "x$libc_arch" = "x$arches" ] && libc_arch="$deb_arch"
+           libc6_arch="${arch//i686/i386}"
+           typeset -p arches arch gcc_arch libc_arch deb_arch
+           #
+           echo "ARCH=$arch" >> $GITHUB_ENV
+           echo "DEB_ARCH=$deb_arch" >> $GITHUB_ENV
+           echo "GCC_ARCH=$gcc_arch" >> $GITHUB_ENV
+           echo "LIBC_ARCH=$libc_arch" >> $GITHUB_ENV
+           echo "LIBC6_ARCH=$libc6_arch" >> $GITHUB_ENV
     - name: More deps
       run: |
-           sudo dpkg --add-architecture arm64 || sudo dpkg --force-architecture arm64 || true
+           sudo dpkg --add-architecture ${{ env.ARCH }} || sudo dpkg --force-architecture ${{ env.ARCH }} || true
+           sudo apt search "^binutils-.*" 
+           sudo apt search "^linux-libc.*" 
+           sudo apt search "^libc.*-dev-" 
            sudo apt install -y -y --no-install-recommends \
            \
            remake libc6-dev \
            \
-           gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
+           gcc-${{ env.DEB_ARCH }} \
+           binutils-${{ env.DEB_ARCH }} \
            \
-           libc6-dev-arm64-cross linux-libc-dev-arm64-cross \
+           libc6-dev-${{ env.LIBC6_ARCH }}-cross \
            linux-libc-dev \
            zlib1g-dev ;
-           sudo apt install -y -y  --install-recommends zlib1g-dev:arm64/unstable || true
-           wget "http://ftp.de.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-1_arm64.deb"
-           ar x zlib1g-dev_1.2.11.dfsg-1_arm64.deb data.tar.xz
+           sudo apt install -y -y --no-install-recommends \
+              linux-libc-dev-${{ env.ARCH }}-cross \
+              || true
+           sudo apt install -y -y --no-install-recommends \
+              linux-libc-dev-${{ env.GCC_ARCH }}-cross \
+              || true
+           sudo apt install -y -y --no-install-recommends \
+              linux-libc-dev-${{ env.DEB_ARCH }}-cross \
+              || true
+           sudo apt install -y -y --no-install-recommends \
+              linux-libc-dev-${{ env.LIBC_ARCH }}-cross \
+              || true
+           sudo apt install -y -y  --install-recommends zlib1g-dev:${{ env.ARCH }}/unstable || true
+           wget "http://ftp.de.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-1_${{ env.LIBC6_ARCH }}.deb"
+           ar x zlib1g-dev_1.2.11.dfsg-1_${{ env.LIBC6_ARCH }}.deb data.tar.xz
            ls -lA -- data.*
            sudo tar -xvf data.tar* -C / --no-overwrite-dir
     - name: Autogenerate
@@ -65,22 +88,22 @@ jobs:
     - name: Configure build
       run: |
            set -- PREFIX=/usr \
-           CROSS_COMPILE=aarch64-linux-gnu- \
-           CROSS=aarch64-linux-gnu- \
-           CROSS_TOOLS=aarch64-linux-gnu- \
-           CROSSCOMPILE=aarch64-linux-gnu- \
-           cross_compile=aarch64-linux-gnu- \
-           BUILD_CC=aarch64-linux-gnu-gcc \
-           BUILD_CXX=aarch64-linux-gnu-g++ \
-           BUILD_BINUTILS=aarch64-linux-gnu- \
-           CC=aarch64-linux-gnu-gcc \
-           CXX=aarch64-linux-gnu-g++ \
-           AR=aarch64-linux-gnu-gcc-ar \
-           GCC_AR=aarch64-linux-gnu-gcc-ar \
-           LD=aarch64-linux-gnu-ld \
-           "LDFLAGS=-L/usr/lib/aarch64-linux-gnu/ -L/lib/aarch64-linux-gnu/ -Wl,--rpath-link,/usr/lib/aarch64-linux-gnu/" \
-           NM=aarch64-linux-gnu-nm \
-           BINUTILS=aarch64-linux-gnu- \
+           CROSS_COMPILE=${{ env.GCC_ARCH }}- \
+           CROSS=${{ env.GCC_ARCH }}- \
+           CROSS_TOOLS=${{ env.GCC_ARCH }}- \
+           CROSSCOMPILE=${{ env.GCC_ARCH }}- \
+           cross_compile=${{ env.GCC_ARCH }}- \
+           BUILD_CC=${{ env.GCC_ARCH }}-gcc \
+           BUILD_CXX=${{ env.GCC_ARCH }}-g++ \
+           BUILD_BINUTILS=${{ env.GCC_ARCH }}- \
+           CC=${{ env.GCC_ARCH }}-gcc \
+           CXX=${{ env.GCC_ARCH }}-g++ \
+           AR=${{ env.GCC_ARCH }}-gcc-ar \
+           GCC_AR=${{ env.GCC_ARCH }}-gcc-ar \
+           LD=${{ env.GCC_ARCH }}-ld \
+           "LDFLAGS=-L/usr/lib/${{ env.GCC_ARCH }}/ -L/lib/${{ env.GCC_ARCH }}/ -Wl,--rpath-link,/usr/lib/${{ env.GCC_ARCH }}/" \
+           NM=${{ env.GCC_ARCH }}-nm \
+           BINUTILS=${{ env.GCC_ARCH }}- \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
@@ -94,29 +117,29 @@ jobs:
     - name: Build with make
       run: |
            set -- PREFIX=/usr \
-           CROSS_COMPILE=aarch64-linux-gnu- \
-           CROSS=aarch64-linux-gnu- \
-           CROSS_TOOLS=aarch64-linux-gnu- \
-           CROSSCOMPILE=aarch64-linux-gnu- \
-           cross_compile=aarch64-linux-gnu- \
-           BUILD_CC=aarch64-linux-gnu-gcc \
-           BUILD_CXX=aarch64-linux-gnu-g++ \
-           BUILD_BINUTILS=aarch64-linux-gnu- \
-           CC=aarch64-linux-gnu-gcc \
-           CXX=aarch64-linux-gnu-g++ \
-           AR=aarch64-linux-gnu-gcc-ar \
-           GCC_AR=aarch64-linux-gnu-gcc-ar \
-           LD=aarch64-linux-gnu-ld \
-           "LDFLAGS=-L/usr/lib/aarch64-linux-gnu/ -L/lib/aarch64-linux-gnu/ -Wl,--rpath-link,/usr/lib/aarch64-linux-gnu/" \
-           NM=aarch64-linux-gnu-nm \
-           BINUTILS=aarch64-linux-gnu- \
+           CROSS_COMPILE=${{ env.GCC_ARCH }}- \
+           CROSS=${{ env.GCC_ARCH }}- \
+           CROSS_TOOLS=${{ env.GCC_ARCH }}- \
+           CROSSCOMPILE=${{ env.GCC_ARCH }}- \
+           cross_compile=${{ env.GCC_ARCH }}- \
+           BUILD_CC=${{ env.GCC_ARCH }}-gcc \
+           BUILD_CXX=${{ env.GCC_ARCH }}-g++ \
+           BUILD_BINUTILS=${{ env.GCC_ARCH }}- \
+           CC=${{ env.GCC_ARCH }}-gcc \
+           CXX=${{ env.GCC_ARCH }}-g++ \
+           AR=${{ env.GCC_ARCH }}-gcc-ar \
+           GCC_AR=${{ env.GCC_ARCH }}-gcc-ar \
+           LD=${{ env.GCC_ARCH }}-ld \
+           "LDFLAGS=-L/usr/lib/${{ env.GCC_ARCH }}/ -L/lib/${{ env.GCC_ARCH }}/ -Wl,--rpath-link,/usr/lib/${{ env.GCC_ARCH }}/" \
+           NM=${{ env.GCC_ARCH }}-nm \
+           BINUTILS=${{ env.GCC_ARCH }}- \
            "CFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches" \
            "CXXFLAGS=-O1 -ggdb3 -gdwarf-4 -ffunction-sections -fdata-sections -frecord-gcc-switches -grecord-gcc-switches" \
            CROSS_COMPILING=t \
            cross_compiling=t \
            V=1 VERBOSE=1 VERBOSE_MAKEFILE=1 \
            ;
-           DESTDIR="$PWD/out/aarch64-linux-gnu"
+           DESTDIR="$PWD/out/${{ env.GCC_ARCH }}"
            mkdir -p "$DESTDIR"
            set -- "$@" "DESTDIR=$DESTDIR" \
            ;
@@ -133,5 +156,5 @@ jobs:
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: output-aarch64
+        name: output-${{ env.DEB_ARCH }}
         path: ./**
