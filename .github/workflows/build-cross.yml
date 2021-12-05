@@ -42,7 +42,7 @@ jobs:
            gcc gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu \
            \
            libc6-dev-arm64-cross \
-           zlib1g-dev
+           zlib1g-dev \
            ;
     - name: Autogenerate
       run: |
