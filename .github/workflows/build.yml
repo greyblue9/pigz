@@ -1,0 +1,20 @@
+name: Build C/C++
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install build dependencies
+      run: sudo apt install -y -y --no-install-recommends remake libc6-dev libdbus-1-dev libelf-dev libffi-dev libgmp-dev libicu-dev libisl-dev libjpeg-dev libjson11-1-dev libltdl-dev liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libnsl-dev libsisl-dev libssl-dev libtasn1-6-dev libxml2-dev 
+    - name: Configure build
+      run: if [ -e configure ]; then chmod 755 configure && bash ./configure --prefix=/usr; else true; fi
+    - name: Build with make
+      run: remake --trace --verbose -e VERBOSE=1 VERBOSE_MAKEFILE=1 silent= SILENT= V=1 PREFIX=/usr 
+
